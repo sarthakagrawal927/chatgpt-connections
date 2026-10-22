@@ -238,6 +238,26 @@ test("authorization-server proxy fails closed unless Auth0 advertises MCP compat
   assert.equal(rejected.headers.get("retry-after"), "30");
 });
 
+test("CIMD metadata works without dynamic registration while advertised endpoints stay issuer-bound", async () => {
+  const metadata = authorizationServerMetadata();
+  delete metadata.registration_endpoint;
+  const response = await handleOAuthMetadataRequest(
+    new Request("https://mcp.example/.well-known/oauth-authorization-server"),
+    env,
+    async () => Response.json(metadata),
+  );
+  assert.equal(response?.status, 200);
+  assert.deepEqual(await response?.json(), metadata);
+
+  metadata.registration_endpoint = "https://other.example/register";
+  const rejected = await handleOAuthMetadataRequest(
+    new Request("https://mcp.example/.well-known/oauth-authorization-server"),
+    env,
+    async () => Response.json(metadata),
+  );
+  assert.equal(rejected?.status, 503);
+});
+
 test("Worker entrypoint invokes the runtime fetch with its global receiver", async () => {
   const originalFetch = globalThis.fetch;
   let called = false;
