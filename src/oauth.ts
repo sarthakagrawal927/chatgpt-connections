@@ -314,7 +314,7 @@ export function validAuthorizationServerMetadata(metadata: Record<string, unknow
   return metadata.issuer === issuer &&
     sameIssuerEndpoint(metadata.authorization_endpoint, issuer) &&
     sameIssuerEndpoint(metadata.token_endpoint, issuer) &&
-    sameIssuerEndpoint(metadata.registration_endpoint, issuer) &&
+    (metadata.registration_endpoint === undefined || sameIssuerEndpoint(metadata.registration_endpoint, issuer)) &&
     sameIssuerEndpoint(metadata.jwks_uri, issuer) &&
     metadata.client_id_metadata_document_supported === true &&
     hasStrings(metadata.token_endpoint_auth_methods_supported, ["none"]) &&
