@@ -54,3 +54,27 @@ test("public HEAD, preflight and errors cannot expose private MCP content", asyn
   const catalog = await (await request("/api/md/_catalog")).json() as { path: string }[];
   assert.deepEqual(catalog.map((route) => route.path), ["/"]);
 });
+
+
+test("authored landing narrative stays present in Markdown", async () => {
+  const html = await (await request("/")).text();
+  const markdown = await (await request("/index.md")).text();
+  const words = (value: string) => value.replace(/<[^>]*>/g, " ")
+    .replace(/&amp;/g, "&").replace(/&#39;|&apos;/g, "'")
+    .replace(/[^\p{L}\p{N}]+/gu, " ").trim();
+  const normalizedMarkdown = words(markdown);
+  const patterns = [
+    /<h1 id="hero-title">([\s\S]*?)<\/h1>/,
+    /<p class="bubble">([\s\S]*?)<\/p>/,
+    /<span class="wire-cap">([\s\S]*?)<\/span>/,
+    /<div class="lane"><b>Public<\/b>([\s\S]*?)<\/div>/,
+    /<div class="lane"><b>Owner sign-in<\/b>([\s\S]*?)<\/div>/,
+    /<div class="dir-head">[\s\S]*?<\/div>\s*<p>([\s\S]*?)<\/p>/,
+    /<h2 id="boundary-title">([\s\S]*?)<\/h2>/,
+  ];
+  for (const pattern of patterns) {
+    const authored = html.match(pattern)?.[1];
+    assert.ok(authored, `Authored HTML section missing: ${pattern}`);
+    assert.ok(normalizedMarkdown.includes(words(authored)), `Markdown omitted authored copy: ${authored}`);
+  }
+});
