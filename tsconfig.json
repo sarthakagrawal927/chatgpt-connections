@@ -13,8 +13,9 @@
     "rootDir": "src",
     "declaration": true,
     "sourceMap": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "allowJs": true
   },
-  "include": ["src/**/*.ts", "worker-configuration.d.ts"],
+  "include": ["src/**/*.ts", "src/**/*.mjs", "worker-configuration.d.ts"],
   "exclude": ["dist", "node_modules"]
 }

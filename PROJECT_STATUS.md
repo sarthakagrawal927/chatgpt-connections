@@ -12,6 +12,19 @@ Multi-user account linking, mutations, device-only data upload, private
 Significant Hobbies records, and the full local Research Papers corpus are out
 of scope.
 
+## Public discovery (source, not deployed)
+
+The anonymous landing directory now has `/index.md`, negotiated Markdown,
+`/api/md/`, `/api/md/_catalog`, `/llms.txt`, `/llms-full.txt`, `/ai.txt`,
+`/api/ai`, `robots.txt` and `sitemap.xml` on each hosted hostname. Only `/` is
+registered for page export; personal MCP data and authentication routes remain
+excluded. Endpoint rows and shared copy come from the HTML source data, with
+parity tests covering the remaining authored narrative.
+
+Allowing GPTBot, ClaudeBot, Google-Extended, Applebot-Extended, CCBot and
+Bytespider on public pages is an explicit owner decision. These source changes
+do not establish production deployment or successful AI indexing.
+
 ## Dependencies
 
 - Cloudflare Workers for the Streamable HTTP OAuth resource server.

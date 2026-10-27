@@ -1,3 +1,5 @@
+import { landingRows, publicCopy, handlePublicDocument, publicRobots, publicSitemap, type LandingRow } from "./public-site.js";
+import { discoveryLinkHeader } from "./agent-surfaces/handler.mjs";
 import { renderStudioFooterHtml } from "@saas-maker/ui/footer-html";
 import { WebStandardStreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/webStandardStreamableHttp.js";
 
@@ -191,39 +193,6 @@ type BrowserTracker = { key: string };
 // App Health project scope is the canonical production app UUID, not an independently configurable Worker value.
 const APP_HEALTH_PROJECT_ID = "app-69c3e3a1-270b-49c0-a31f-9fc1c71ef97f";
 
-const ROUTE_DISPLAY_NAMES: Readonly<Record<string, string>> = {
-  "/personal-apps/mcp": "Personal apps",
-  "/anime-list/mcp": "Anime list",
-  "/anime-list-public/mcp": "Public anime list",
-};
-
-interface LandingRow {
-  path: string;
-  name: string;
-  description: string;
-  endpoint: string;
-  audience: "personal" | "public";
-  status: "live" | "prepared";
-}
-
-function landingRows(): LandingRow[] {
-  return Object.entries(HOSTED_ROUTES).map(([path, route]) => {
-    const name = ROUTE_DISPLAY_NAMES[path] ?? (route.kind === "adapter" ? route.app.name : route.serverName);
-    const description =
-      route.kind === "adapter"
-        ? route.app.instructions.split(/(?<=[.!?])\s/)[0] ?? route.app.instructions
-        : `Read-only MCP connection proxied to ${new URL(route.upstreamUrl).hostname}.`;
-    return {
-      path,
-      name,
-      description,
-      endpoint: `https://${route.hosts[0]}${path}`,
-      audience: route.audience,
-      status: route.productionStatus === "prepared" ? "prepared" : "live",
-    };
-  });
-}
-
 function landingRowHtml(row: LandingRow, index: number): string {
   const access = row.audience === "personal" ? "Owner sign-in" : "Public";
   const statusLabel = row.status === "prepared" ? "Prepared" : "Live";
@@ -236,6 +205,10 @@ function landingRowHtml(row: LandingRow, index: number): string {
           <span class="pills"><span class="badge ${row.audience}">${access}</span><span class="status ${row.status}">${statusLabel}</span></span>
         </div>
       </li>`;
+}
+
+function publicInline(value: string): string {
+  return escapeHtml(value).replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>").replace(/`([^`]+)`/g, "<code>$1</code>");
 }
 
 function landingResponse(url: URL, browserTracker?: BrowserTracker): Response {
@@ -275,8 +248,10 @@ function landingResponse(url: URL, browserTracker?: BrowserTracker): Response {
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>ChatGPT Connections — SaaS Maker MCP endpoints</title>
-<meta name="description" content="Hosted read-only MCP connections for ChatGPT and other MCP clients: the list of active endpoints, their audiences, and status.">
+<title>${escapeHtml(publicCopy.title)}</title>
+<meta name="description" content="${escapeHtml(publicCopy.summary)}">
+<meta name="ai-summary" content="${escapeHtml(publicCopy.summary)}">
+<link rel="alternate" type="text/markdown" href="${url.origin}/index.md">
 <meta name="theme-color" content="#0c0f0d">
 <link rel="canonical" href="${url.origin}/">
 <link rel="icon" href="data:,">
@@ -290,7 +265,7 @@ function landingResponse(url: URL, browserTracker?: BrowserTracker): Response {
 <meta property="og:image" content="${url.origin}/og-image.png">
 <meta name="twitter:card" content="summary_large_image">
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"WebSite","name":"ChatGPT Connections","url":"${url.origin}/","description":"Hosted read-only MCP connections for ChatGPT and other MCP clients."}
+{"@context":"https://schema.org","@type":"WebSite","name":"ChatGPT Connections","url":"${url.origin}/","description":${JSON.stringify(publicCopy.summary)}}
 </script>
 <style>
 @font-face{font-family:"Geist";src:url("${fonts}/geist.woff2") format("woff2");font-weight:100 900;font-display:swap}
@@ -451,7 +426,7 @@ studio-footer nav[aria-label="Footer"]>div{grid-column:1/-1}studio-footer nav[ar
       <div>
         <p class="eyebrow">Read-only MCP gateway · SaaS Maker</p>
         <h1 id="hero-title">Connect ChatGPT to your <em>Fleet apps.</em></h1>
-        <p class="lede">Each endpoint below is a hosted MCP server for one Fleet product. Add its URL to ChatGPT and it can <strong>read</strong> from that product. It cannot save, edit or delete anything. <strong>Public</strong> endpoints need no account. <strong>Owner sign-in</strong> endpoints are the owner's personal connectors.</p>
+        <p class="lede">${publicInline(publicCopy.intro)}</p>
         <div class="actions">
           <a class="btn" href="#directory">Browse the endpoints <span aria-hidden="true">↓</span></a>
           <a class="textlink" href="#how">How to connect one</a>
@@ -501,9 +476,9 @@ studio-footer nav[aria-label="Footer"]>div{grid-column:1/-1}studio-footer nav[ar
   <section class="steps" id="how" aria-label="How to connect">
     <div class="wrap">
       <ol>
-        <li><span class="n">01</span><h3>Copy an endpoint</h3><p>Pick a product from the directory and copy its full URL, ending in <code>/mcp</code>.</p></li>
-        <li><span class="n">02</span><h3>Add it to ChatGPT</h3><p>Create a custom connector in ChatGPT, or in any MCP client, and paste the URL.</p></li>
-        <li><span class="n">03</span><h3>Ask, and it reads</h3><p>Public endpoints answer right away. Owner sign-in endpoints ask the product to confirm it's the owner first.</p></li>
+        <li><span class="n">01</span><h3>${escapeHtml(publicCopy.steps[0]!.title)}</h3><p>${publicInline(publicCopy.steps[0]!.body)}</p></li>
+        <li><span class="n">02</span><h3>${escapeHtml(publicCopy.steps[1]!.title)}</h3><p>${publicInline(publicCopy.steps[1]!.body)}</p></li>
+        <li><span class="n">03</span><h3>${escapeHtml(publicCopy.steps[2]!.title)}</h3><p>${publicInline(publicCopy.steps[2]!.body)}</p></li>
       </ol>
     </div>
   </section>
@@ -540,10 +515,10 @@ ${personalCards}
           <h2 id="boundary-title">Built to read. <em>Nothing else.</em></h2>
         </div>
         <ul>
-          <li><b>No writes</b>No tool can save, edit, share or delete product data.</li>
-          <li><b>No admin surfaces</b>Operator controls and raw databases stay out of reach.</li>
-          <li><b>No private fields</b>Responses are sanitized to each product's approved read contract.</li>
-          <li><b>No shared credentials</b>ChatGPT never receives a product API key or a shared application token.</li>
+          <li><b>${escapeHtml(publicCopy.boundaries[0]!.title)}</b>${escapeHtml(publicCopy.boundaries[0]!.body)}</li>
+          <li><b>${escapeHtml(publicCopy.boundaries[1]!.title)}</b>${escapeHtml(publicCopy.boundaries[1]!.body)}</li>
+          <li><b>${escapeHtml(publicCopy.boundaries[2]!.title)}</b>${escapeHtml(publicCopy.boundaries[2]!.body)}</li>
+          <li><b>${escapeHtml(publicCopy.boundaries[3]!.title)}</b>${escapeHtml(publicCopy.boundaries[3]!.body)}</li>
         </ul>
       </div>
     </div>
@@ -774,12 +749,19 @@ export async function handleHostedRequest(
   const url = new URL(request.url);
   const footerAsset = footerAssetResponse(request);
   if (footerAsset) return footerAsset;
+  const publicDocument = await handlePublicDocument(request);
+  if (publicDocument) return publicDocument;
+  if ((request.method === "GET" || request.method === "HEAD") && url.pathname === "/robots.txt") return publicRobots(request);
+  if ((request.method === "GET" || request.method === "HEAD") && url.pathname === "/sitemap.xml") return publicSitemap(request);
   if (url.pathname === "/health" && request.method === "GET") return healthResponse();
   if (url.pathname === "/og-image.png" && request.method === "GET") {
     return ogImageResponse();
   }
   if (url.pathname === "/" && (request.method === "GET" || request.method === "HEAD")) {
-    return landingResponse(url, browserTracker);
+    const response = landingResponse(url, browserTracker);
+    response.headers.set("Link", discoveryLinkHeader(url.origin));
+    response.headers.set("Vary", "Accept");
+    return request.method === "HEAD" ? new Response(null, { headers: response.headers }) : response;
   }
 
   const route = hostedRoute(url.pathname, url.hostname);
