@@ -14,7 +14,7 @@ products. It routes data according to each product's existing storage boundary:
 - Public hosted routes are anonymous and can read only approved public APIs or
   exports.
 
-[`docs/api-parity.md`](docs/api-parity.md) defines the exact parity guarantee:
+[`docs/api-parity.md`](../api-parity.md) defines the exact parity guarantee:
 complete parity with each approved MCP/read contract, not with every product
 API. Excluded writes, administrative surfaces, and private fields remain
 deliberately unavailable.
@@ -104,7 +104,7 @@ Required Worker binding names (values stay outside git):
 
 After the OpenAI portal generates domain challenges, add the matching optional
 `OPENAI_CHALLENGE_*` secret named in
-[`docs/listings/plugins.json`](docs/listings/plugins.json). Each branded host
+[`docs/listings/plugins.json`](../listings/plugins.json). Each branded host
 returns only its own plaintext token and otherwise fails closed with 404.
 
 ## Local CodeVetter
@@ -149,7 +149,7 @@ intentionally not deployed. Their domains, production
 monitoring claims, OpenAI drafts, and challenge secrets remain activation work.
 LoopTV, PostTrainLLM, and What It Takes to Win are explicitly **not needed for
 now** and are outside the release surface. The full eligibility review is in
-[`docs/non-ios-eligibility.md`](docs/non-ios-eligibility.md).
+[`docs/non-ios-eligibility.md`](../non-ios-eligibility.md).
 
 ## Development and verification
 
@@ -254,7 +254,7 @@ a total of 145, and a continuation offset of two with upstream provenance.
 That is a useful public discovery flow. It does not establish the freshness of
 all repository metadata or qualify private account connections.
 
-The redacted [verification receipt](docs/verification/2026-09-07-public-mcp.json)
+The redacted [verification receipt](../verification/2026-09-07-public-mcp.json)
 retains protocol outcomes and public identifiers. Research Papers and Significant
 Hobbies also passed representative reads and three-page pagination. High Signal
 returned a brief, but a small pagination dataset is not evidence of broad source
@@ -313,5 +313,5 @@ read token affects only that product. CodeVetter revocation uses its in-app
 Disable action and removal of its Codex entry. No rollback deletes application
 or repository data.
 
-Retained evaluation prompts remain in [evaluations.md](docs/evaluations.md).
-Runtime decisions are in [runtime-compatibility.md](docs/runtime-compatibility.md).
+Retained evaluation prompts remain in [evaluations.md](../evaluations.md).
+Runtime decisions are in [runtime-compatibility.md](../runtime-compatibility.md).
