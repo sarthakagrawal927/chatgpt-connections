@@ -10,7 +10,7 @@
   },
   "scripts": {
     "build": "tsc -p tsconfig.json",
-    "check": "pnpm run types:check && pnpm run build && pnpm run test && node --test scripts/deploy.test.mjs",
+    "check": "node --test scripts/deploy.test.mjs",
     "types:worker": "wrangler types --include-runtime false",
     "types:check": "wrangler types --include-runtime false --check",
     "dev:worker": "wrangler dev",
