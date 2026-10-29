@@ -1,3 +1,13 @@
+# Source retirement · 29 October 2026
+
+- Owner decision: merge the shared MCP gateway into SaaS Maker, retaining product-specific scopes and existing endpoint URLs.
+- Current source and operations: `sass-maker/saas-maker`, `apps/mcp`; source absorption PR #357 retains this repository’s complete history.
+- This checkout is recovery/history, not a separate active product. Its publisher fails closed before invoking Git, credentials or Cloudflare.
+- Cutover order: land the new source and successful MCP CI, deploy and verify through SaaS Maker, then disable this repository’s CI and daily monitor. Preserve the deployed rollback version and historical source.
+- New issues belong in SaaS Maker. There were no open issues in the source repository at preparation.
+
+---
+
 # ChatGPT Connections
 
 ## Why / What

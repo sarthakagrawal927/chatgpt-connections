@@ -1,3 +1,13 @@
+# Moved to SaaS Maker
+
+The shared MCP gateway is maintained in [SaaS Maker’s `apps/mcp`](https://github.com/sass-maker/saas-maker/tree/main/apps/mcp). This repository preserves the source history and is no longer a product or a release source.
+
+Existing MCP endpoints and product authentication scopes remain in place. Report new issues in [SaaS Maker](https://github.com/sass-maker/saas-maker/issues). The local publisher deliberately refuses releases; use `pnpm deploy:mcp` from SaaS Maker.
+
+The previous project documentation follows as historical context.
+
+---
+
 # ChatGPT Connections
 
 ChatGPT Connections is the standalone read-only MCP gateway for selected

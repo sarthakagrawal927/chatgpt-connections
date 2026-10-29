@@ -1,3 +1,9 @@
+# Retired source repository
+
+This checkout is historical. The owner absorbed the shared MCP gateway into SaaS Maker. Implement, test and release current work from `saas-maker/apps/mcp`; track issues in `sass-maker/saas-maker`. Do not deploy from this repository or reactivate its scheduled monitor. `scripts/deploy.mjs` intentionally fails closed.
+
+The instructions below describe the historical implementation.
+
 # ChatGPT Connections agent instructions
 
 - Preserve the read-only MCP boundary. Do not add mutations, administrative
